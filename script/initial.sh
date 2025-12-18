@@ -35,7 +35,7 @@ fi
 
 # --- Clone repo ---
 REPO_URL="https://github.com/Cheastear/iteam-workflow-improvment"
-DEST_DIR="."
+DEST_DIR="iteam-workflow-improvment"
 
 if [ ! -d "$DEST_DIR" ]; then
     echo "Cloning repository..."
@@ -53,8 +53,9 @@ if [ -f package.json ]; then
     echo "Installing dependencies..."
     npm install
 
-    echo "Starting project..."
-    npm start
+    echo "Starting project in background..."
+    nohup npm start > ../project.log 2>&1 &
+    echo "Project started!"
 else
     echo "No package.json found. Exiting."
 fi
