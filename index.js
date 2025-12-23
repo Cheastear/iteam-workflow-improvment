@@ -65,6 +65,16 @@ const server = net.createServer((socket) => {
     socket.write("> ");
   });
 
+  socket.on("error", (err) => {
+    console.log("Socket error:", err.message);
+    rl.close();
+  });
+
+  socket.on("close", (hadError) => {
+    console.log("Socket closed", hadError ? "with error" : "");
+    rl.close();
+  });
+
   socket.on("end", () => {
     console.log("Client disconnected");
     rl.close();
