@@ -24,6 +24,28 @@ function randomFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const commands = {
+  exit: (socket) => {
+    socket.write("Bye!\r\n");
+    socket.end();
+  },
+  fart: (socket) => {
+    exec("osascript -e 'set volume output volume 100'");
+    playMusic(
+      randomFromArray(
+        new Array(4).fill(null).map((_, i) => `./sounds/fart-${i + 1}.mp3`)
+      )
+    );
+  },
+  "order 66": (socket) => {
+    exec("osascript -e 'set volume output volume 100'");
+    playMusic("./sounds/test.mp3");
+  },
+  stop: () => {
+    stopMusic();
+  },
+};
+
 const server = net.createServer((socket) => {
   console.log("Client connected");
   socket.write("Welcome to Node Telnet Server\r\n> ");
@@ -38,28 +60,9 @@ const server = net.createServer((socket) => {
     const message = line.trim();
     console.log("Received:", message);
 
-    if (message === "exit") {
-      socket.write("Bye!\r\n");
-      socket.end();
-      return;
-    }
-
-    if (message === "fart") {
-      exec("osascript -e 'set volume output volume 100'");
-      playMusic(
-        randomFromArray(
-          new Array(4).fill(null).map((_, i) => `./sounds/fart-${i + 1}.mp3`)
-        )
-      );
-    }
-
-    if (message === "order 66") {
-      exec("osascript -e 'set volume output volume 100'");
-      playMusic("./sounds/test.mp3");
-    }
-
-    if (message === "stop") {
-      stopMusic();
+    const command = commands[message];
+    if (command) {
+      command(socket);
     }
 
     socket.write("> ");
