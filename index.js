@@ -29,7 +29,13 @@ const commands = {
     socket.write("Bye!\r\n");
     socket.end();
   },
-  fart: (socket) => {
+  "ya tobi brehala": () => {
+    playMusic("./sounds/klavdia-petrivna-ya-tob-brehala.mp3");
+  },
+  hehe: () => {
+    playMusic("./sounds/sinister-laugh.mp3");
+  },
+  fart: () => {
     exec("osascript -e 'set volume output volume 100'");
     playMusic(
       randomFromArray(
@@ -37,7 +43,7 @@ const commands = {
       )
     );
   },
-  "order 66": (socket) => {
+  "order 66": () => {
     exec("osascript -e 'set volume output volume 100'");
     playMusic("./sounds/test.mp3");
   },
@@ -56,9 +62,18 @@ const server = net.createServer((socket) => {
     terminal: true,
   });
 
+  rl.on("error", (err) => {
+    console.log("Readline error:", err.message);
+    rl.close();
+  });
+
   rl.on("line", (line) => {
     const message = line.trim();
     console.log("Received:", message);
+
+    if (message === "help") {
+      Object.keys(commands).forEach((cmd) => socket.write(cmd + "\r\n"));
+    }
 
     const command = commands[message];
     if (command) {
