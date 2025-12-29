@@ -29,8 +29,11 @@ const commands = {
     socket.write("Bye!\r\n");
     socket.end();
   },
-  update: () => {
-    exec("git -C ./iteam-workflow-improvment pull");
+  update: (socket) => {
+    exec("git -C ./iteam-workflow-improvment pull").addListener(
+      "message",
+      (msg) => socket.write(msg)
+    );
   },
   "ya tobi brehala": () => {
     playMusic("./sounds/klavdia-petrivna-ya-tob-brehala.mp3");
