@@ -29,6 +29,9 @@ const commands = {
     socket.write("Bye!\r\n");
     socket.end();
   },
+  update: () => {
+    exec("git -C ./iteam-workflow-improvment pull");
+  },
   "ya tobi brehala": () => {
     playMusic("./sounds/klavdia-petrivna-ya-tob-brehala.mp3");
   },
