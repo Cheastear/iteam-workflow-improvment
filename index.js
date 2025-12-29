@@ -55,8 +55,6 @@ const commands = {
   },
 };
 
-//test
-
 const server = net.createServer((socket) => {
   console.log("Client connected");
   socket.write("Welcome to Node Telnet Server\r\n> ");
