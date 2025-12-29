@@ -5,6 +5,7 @@ import { exec, spawn } from "child_process";
 let player = null;
 
 function playMusic(link) {
+  exec("osascript -e 'set volume output volume 100'");
   if (player) return; // already playing
 
   player = spawn("afplay", [link]);
@@ -24,41 +25,43 @@ function randomFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-const commands = {
-  exit: (socket) => {
-    socket.write("Bye!\r\n");
-    socket.end();
+const commands = [
+  {
+    command: "exit",
+    exec: (socket) => {
+      socket.write("Bye!\r\n");
+      socket.end();
+    },
   },
-  update: (socket) => {
-    exec("git -C ./iteam-workflow-improvment pull").addListener(
-      "message",
-      (msg) => socket.write(msg)
-    );
+  {
+    command: "ya tobi brehala",
+    exec: () => {
+      playMusic("./sounds/klavdia-petrivna-ya-tob-brehala.mp3");
+    },
   },
-  "ya tobi brehala": () => {
-    playMusic("./sounds/klavdia-petrivna-ya-tob-brehala.mp3");
+  {
+    command: "hehe",
+    exec: () => {
+      playMusic("./sounds/sinister-laugh.mp3");
+    },
   },
-  hehe: () => {
-    playMusic("./sounds/sinister-laugh.mp3");
+  {
+    command: "fart",
+    exec: () => {
+      playMusic(
+        randomFromArray(
+          new Array(4).fill(null).map((_, i) => `./sounds/fart-${i + 1}.mp3`)
+        )
+      );
+    },
   },
-  fart: () => {
-    exec("osascript -e 'set volume output volume 100'");
-    playMusic(
-      randomFromArray(
-        new Array(4).fill(null).map((_, i) => `./sounds/fart-${i + 1}.mp3`)
-      )
-    );
+  {
+    command: "stop",
+    exec: () => {
+      stopMusic();
+    },
   },
-  "order 66": () => {
-    exec("osascript -e 'set volume output volume 100'");
-    playMusic("./sounds/test.mp3");
-  },
-  stop: () => {
-    stopMusic();
-  },
-};
-
-// test
+];
 
 const server = net.createServer((socket) => {
   console.log("Client connected");
@@ -83,9 +86,9 @@ const server = net.createServer((socket) => {
       Object.keys(commands).forEach((cmd) => socket.write(cmd + "\r\n"));
     }
 
-    const command = commands[message];
+    const command = commands.find((c) => message.startsWith(c.command));
     if (command) {
-      command(socket);
+      command.exec(socket);
     }
 
     socket.write("> ");
