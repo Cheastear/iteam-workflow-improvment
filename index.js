@@ -1,6 +1,11 @@
 import net from "net";
 import readline from "readline";
 import { exec, spawn } from "child_process";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let player = null;
 
@@ -31,6 +36,22 @@ const commands = [
     exec: (socket) => {
       socket.write("Bye!\r\n");
       socket.end();
+    },
+  },
+  {
+    command: "update",
+    exec: (socket) => {
+      exec(
+        "git pull origin main",
+        { cwd: __dirname },
+        (err, stdout, stderr) => {
+          if (err) {
+            socket.write(`Error updating: ${err.message}\r\n> `);
+            return;
+          }
+          socket.write(`Update output:\r\n${stdout}\r\n${stderr}\r\n> `);
+        }
+      );
     },
   },
   {

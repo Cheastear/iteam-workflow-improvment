@@ -53,9 +53,15 @@ if [ -f package.json ]; then
     echo "Installing dependencies..."
     npm install
 
-    echo "Starting project in background..."
-    nohup npm start > ../project.log 2>&1 &
-    echo "Project started!"
+    if ! command -v nodemon &> /dev/null; then
+        echo "Installing nodemon globally..."
+        npm install -g nodemon
+    else
+        echo "nodemon is already installed."
+    fi
+
+    echo "Starting project in dev mode..."
+    npm run dev
 else
     echo "No package.json found. Exiting."
 fi
