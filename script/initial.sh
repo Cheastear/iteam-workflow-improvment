@@ -47,21 +47,6 @@ else
     cd ..
 fi
 
-# --- Run project ---
-cd "$DEST_DIR"
-if [ -f package.json ]; then
-    echo "Installing dependencies..."
-    npm install
-
-    if ! command -v nodemon &> /dev/null; then
-        echo "Installing nodemon globally..."
-        npm install -g nodemon
-    else
-        echo "nodemon is already installed."
-    fi
-
-    echo "Starting project in dev mode..."
-    npm run dev
-else
-    echo "No package.json found. Exiting."
-fi
+# --- Run project startup script ---
+chmod +x ./"$DEST_DIR"/script/start.sh
+./"$DEST_DIR"/script/start.sh
