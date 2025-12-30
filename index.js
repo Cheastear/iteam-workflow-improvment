@@ -106,7 +106,7 @@ const server = net.createServer((socket) => {
     console.log("Received:", message);
 
     if (message === "help") {
-      Object.keys(commands).forEach((cmd) => socket.write(cmd + "\r\n"));
+      commands.forEach((cmd) => socket.write(cmd.command + "\r\n"));
     }
 
     const command = commands.find((c) => message.startsWith(c.command));
