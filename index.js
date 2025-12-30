@@ -30,6 +30,8 @@ function randomFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// test
+
 const commands = [
   {
     command: "exit",
