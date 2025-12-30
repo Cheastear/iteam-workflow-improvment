@@ -41,6 +41,12 @@ const commands = [
     },
   },
   {
+    command: "help",
+    exec: (socket) => {
+      commands.forEach((cmd) => socket.write(cmd.command + "\r\n"));
+    },
+  },
+  {
     command: "update",
     exec: (socket) => {
       exec(
@@ -103,11 +109,6 @@ const server = net.createServer((socket) => {
 
   rl.on("line", (line) => {
     const message = line.trim();
-    console.log("Received:", message);
-
-    if (message === "help") {
-      commands.forEach((cmd) => socket.write(cmd.command + "\r\n"));
-    }
 
     const command = commands.find((c) => message.startsWith(c.command));
     if (command) {
