@@ -1,27 +1,38 @@
 import net from "net";
 import readline from "readline";
-import { exec, spawn } from "child_process";
+import { exec } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
+import playerLib from "play-sound";
+import loudness from "loudness";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const audio = playerLib();
 let player = null;
 
+async function setDeviceVolume(volume) {
+  try {
+    await loudness.setVolume(volume);
+  } catch (err) {
+    console.error("Failed to set volume:", err);
+  }
+}
+
 function playMusic(link) {
-  exec("osascript -e 'set volume output volume 100'");
-  if (player) return; // already playing
+  setDeviceVolume(100);
+  if (player) return;
 
-  player = spawn("afplay", [link]);
-
-  player.on("exit", () => {
+  player = audio.play(link, (err) => {
+    if (err) console.error(err);
     player = null;
   });
 }
+
 function stopMusic() {
-  if (player) {
-    player.kill("SIGTERM"); // stop afplay
+  if (player && player.kill) {
+    player.kill();
     player = null;
   }
 }
@@ -29,8 +40,6 @@ function stopMusic() {
 function randomFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
-
-// test
 
 const commands = [
   {
